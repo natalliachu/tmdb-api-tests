@@ -1,0 +1,659 @@
+{
+	"info": {
+		"_postman_id": "1ab4984f-c67b-47b9-a7b6-c82ba9f059b4",
+		"name": "TMDB API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Top Rated movies from TMDB",
+			"item": [
+				{
+					"name": "get-top-rated-200-status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('get Top Rated list with default values: positive case', () => {",
+									"    const responseJson = pm.response.json()",
+									"    const totalResults = responseJson.total_results",
+									"    const totalPages = responseJson.total_pages",
+									"    const pages = Math.round(totalResults / totalPages)",
+									"",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(responseJson.page).to.eq(1)",
+									"    pm.expect(responseJson.results[0]).to.contain.key(['adult', 'overview', 'release_date', 'genre_ids', 'id', 'original_title', 'original_language', 'title', 'popularity', 'vote_count', 'video', 'vote_average'])",
+									"",
+									"    pm.expect(totalResults).to.be.gte(1)",
+									"    pm.expect(totalPages).to.be.gte(1)",
+									"    pm.expect(responseJson.results).to.have.lengthOf(pages)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/movie/top_rated",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movie",
+								"top_rated"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-top-rated-404-error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('page not exist error', () => {",
+									"    const responseJson = pm.response.json()",
+									"",
+									"    pm.response.to.have.status(404)",
+									"    pm.expect(responseJson.status_code).to.eq(34)",
+									"    pm.expect(responseJson.status_message).to.contain(\"The resource you requested could not be found\")",
+									"    pm.expect(responseJson.success).to.be.false",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/movie/top_rated/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movie",
+								"top_rated",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-top-rated-page-in-range",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('page in range test', () => {",
+									"    const responseJson = pm.response.json()",
+									"",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(responseJson.page).to.eq(parseInt(pm.request.url.query.get([\"page\"])))",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/movie/top_rated?page=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movie",
+								"top_rated"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-top-rated-page-out-range",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('page out of 500 pages range', () => {",
+									"    const responseJson = pm.response.json()",
+									"    pm.response.to.have.status(422)",
+									"    pm.expect(responseJson.errors).to.contain('page must be less than or equal to 500')",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/movie/top_rated?page=501",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movie",
+								"top_rated"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "501"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-top-rated-401-error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('invalid api test', () => {",
+									"    const responseJson = pm.response.json()",
+									"    pm.response.to.have.status(401)",
+									"    pm.expect(responseJson.status_code).to.eq(7)",
+									"    pm.expect(responseJson.status_message).to.contain(\"Invalid API key: You must be granted a valid key.\")",
+									"    pm.expect(responseJson.success).to.be.false",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "invalidKey",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "query",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "api_key",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/movie/top_rated",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movie",
+								"top_rated"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Rate movies on TMDB",
+			"item": [
+				{
+					"name": "rate-a-movie-as-a-guest-201-status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({",
+									"    method: 'GET',",
+									"    url: pm.variables.get(\"baseUrl\") + \"/authentication/guest_session/new?api_key=\" + pm.variables.get(\"api_key\")",
+									"}, (error, response) => {",
+									"    pm.globals.set('guest_session_id', response.json().guest_session_id)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('sucessfuly rate movie', () => {",
+									"    pm.response.to.have.status(201)",
+									"",
+									"    const responseJson = pm.response.json()",
+									"    pm.expect(responseJson.success).to.be.true",
+									"    pm.expect(responseJson.status_code).to.eq(1)",
+									"    pm.expect(responseJson.status_message).to.eq('Success.')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/movie/:movie_id/rating?guest_session_id={{guest_session_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movie",
+								":movie_id",
+								"rating"
+							],
+							"query": [
+								{
+									"key": "guest_session_id",
+									"value": "{{guest_session_id}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "812"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rate-a-movie-as-a-guest-rate-is-our-of-range",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({",
+									"    method: 'GET',",
+									"    url: pm.variables.get(\"baseUrl\") + \"/authentication/guest_session/new?api_key=\" + pm.variables.get(\"api_key\")",
+									"}, (error, response) => {",
+									"    pm.globals.set('guest_session_id', response.json().guest_session_id)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('sucessfuly rate movie', () => {",
+									"    pm.response.to.have.status(400)",
+									"",
+									"    const responseJson = pm.response.json()",
+									"    pm.expect(responseJson.success).to.be.false",
+									"    pm.expect(responseJson.status_code).to.eq(18)",
+									"    pm.expect(responseJson.status_message).to.eq('Value too high: Value must be less than, or equal to 10.0.')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": 13\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/movie/:movie_id/rating?guest_session_id={{guest_session_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movie",
+								":movie_id",
+								"rating"
+							],
+							"query": [
+								{
+									"key": "guest_session_id",
+									"value": "{{guest_session_id}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "812"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rate-a-movie-with-session-id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"/*",
+									"There are three steps to rate a movie as a user with session_id: ",
+									"    - create \"request_token\"",
+									"    - user should authorize this token",
+									"    - greate \"session_id\" with thhe authorized request token.",
+									"",
+									"Here in test I managed to generate request_token but unfortunately I don't know how to authorize it. So, unfortunately this test is failed but I just want to share with you my understanding of the process and how it should work. ",
+									"*/",
+									"",
+									"// Create request_token",
+									"pm.sendRequest({",
+									"    method: 'GET',",
+									"    url: pm.variables.get(\"baseUrl\") + \"/authentication/token/new?api_key=\" + pm.variables.get(\"api_key\"),",
+									"}, (error, response) => {",
+									"    const request_token = response.json().request_token",
+									"",
+									"    // User should authorize request_token",
+									"    pm.sendRequest({",
+									"        method: 'GET',",
+									"        url: 'https://www.themoviedb.org/authenticate/' + request_token",
+									"    })",
+									"",
+									"    // pm.sendRequest({",
+									"    //     method: 'POST',",
+									"    //     url: 'https://www.themoviedb.org/pusher/auth'",
+									"    // })",
+									"",
+									"    // Use authorized request_token to get session_id",
+									"    pm.sendRequest({",
+									"        method: 'GET',",
+									"        url: pm.variables.get(\"baseUrl\") + \"/authentication/session/new?api_key=\" + pm.variables.get(\"api_key\"),",
+									"        body: {",
+									"            request_token: request_token",
+									"        }",
+									"    }, (error, response) => {",
+									"        pm.globals.set('session_id', response.json().session_id)",
+									"    })",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test.skip('sucessfuly rate movie', () => {",
+									"    pm.response.to.have.status(201)",
+									"",
+									"    const responseJson = pm.response.json()",
+									"    pm.expect(responseJson.succeess).to.be.true",
+									"    pm.expect(responseJson.status_code).to.eq(1)",
+									"    pm.expect(responseJson.status_message).to.eq('Success.')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/movie/:movie_id/rating?session_id={{session_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"movie",
+								":movie_id",
+								"rating"
+							],
+							"query": [
+								{
+									"key": "session_id",
+									"value": "{{session_id}}"
+								}
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "812"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "bonus-get-list-by-bearer-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('get list via API v4 using Bearer Authentification', () => {",
+							"    pm.response.to.have.status(200)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMzlkNWVkNzZhZjMxNGMxM2MxN2Q3NDZhNThlNGU2YiIsInN1YiI6IjYwM2M5ZGZlNDcwZWFkMDA1MmM3NjZhZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wE5xce7r7Baw8kPkcwdCfTh0I_UiKLhEhoZXjXIqIK8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrlv4}}/list/1",
+					"host": [
+						"{{baseUrlv4}}"
+					],
+					"path": [
+						"list",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "f39d5ed76af314c13c17d746a58e4e6b",
+				"type": "string"
+			},
+			{
+				"key": "in",
+				"value": "query",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "api_key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://api.themoviedb.org/3"
+		},
+		{
+			"key": "api_key",
+			"value": "f39d5ed76af314c13c17d746a58e4e6b"
+		},
+		{
+			"key": "movie_id",
+			"value": "812"
+		},
+		{
+			"key": "baseUrlv4",
+			"value": "https://api.themoviedb.org/4"
+		}
+	]
+}
