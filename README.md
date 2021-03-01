@@ -24,3 +24,16 @@ Click "Import" and choose `TMDB API Tests.postman_collection.json` file from the
 If everything set up correctly you can find big blue "Run TMDB API Tests" button. Click it and enjoy! 😊
 
 ![alt text](./img/test_results.png)
+
+
+### Test structures
+In the collection you can find two folders with the requests for "get top rated movies" and "rate a movie". 
+There are some variables which are set up for the collection and shared between all the requests. 
+
+
+The tests can be found in "Tests" tab for each request. 
+![alt text](./img/tests_body.png)
+
+
+The tests with `POST` requests to "Rate movies on TMDB" have some Pre-request Scripts which are run before the request is sent and help to get `guest_session_id`.
+![alt text](./img/pre-requests.png)
