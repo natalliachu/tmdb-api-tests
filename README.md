@@ -1,4 +1,4 @@
-Postman collection for [TMDb API](https://developers.themoviedb.org/3/) testing
+## Postman collection for [TMDb API](https://developers.themoviedb.org/3/) testing
 
 Here you can find the set of requests to the following endpoints:
 * https://developers.themoviedb.org/3/movies/get-top-rated-movies
@@ -10,7 +10,7 @@ Clone this repository:
 git clone https://github.com/natalliachu/tmdb-api-tests.git
 ```
 
-The repository contains exported Postman collection with API tests. To launch them you need to have Postman account. If you don't have one ypu can create it from [Postman Sign Up page](https://identity.getpostman.com/signup).
+The repository contains exported Postman collection with API tests. To launch them you need to have Postman account. If you don't have one you can create it from [Postman Sign Up page](https://identity.getpostman.com/signup).
 
 After succesfull login or signing up you can find a workspace ("My Workspace" by default) with Collections section inside. 
 
@@ -20,4 +20,7 @@ Click "Import" and choose `TMDB API Tests.postman_collection.json` file from the
 
 ![alt text](./img/run_tests.png) 
 
+
 If everything set up correctly you can find big blue "Run TMDB API Tests" button. Click it and enjoy! 😊
+
+![alt text](./img/test_results.png)
