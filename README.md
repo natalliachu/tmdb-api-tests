@@ -37,3 +37,13 @@ The tests can be found in "Tests" tab for each request.
 
 The tests with `POST` requests to "Rate movies on TMDB" have some Pre-request Scripts which are run before the request is sent and help to get `guest_session_id`.
 ![alt text](./img/pre-requests.png)
+
+⚠ Note: to run tests you can use your own API key for TMDB API.
+To get it follow the instructions: 
+- Go to https://www.themoviedb.org/
+- Click on “Join TMDb”.
+- After signing up, please follow the instructions in
+https://developers.themoviedb.org/3/getting-started​ to obtain an API key. 
+You can choose the Developer type and you only have to fill the form with any info.
+- As soon as you get API key you can open "TMDB API Tests" collection in Postman, click on Variables and set your API key as a pre-defined variablle.
+![alt text](./img/change_api_key.png)
